@@ -20,6 +20,6 @@ public class AiController {
 	public ResponseEntity<String> requestAI(@RequestParam String prompt){
 		String result = aiService.callAI(prompt);
 		return ResponseEntity.ok(result);
-//							.ok
+//							.oko
 	}
 }
