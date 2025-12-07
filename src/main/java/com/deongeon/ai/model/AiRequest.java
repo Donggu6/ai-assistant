@@ -20,7 +20,9 @@ public class AiRequest {
 	private Long userId;
 	private String requestData;
 	private String responseData;
-	private LocalDateTime timetamp = LocalDateTime.now();
+	
+	// 요청 시간 저장
+	private LocalDateTime timestamp = LocalDateTime.now();
 	
 	public Long getId() {
 		return id;
@@ -46,10 +48,10 @@ public class AiRequest {
 	public void setResponseData(String responseData) {
 		this.responseData = responseData;
 	}
-	public LocalDateTime getTimetamp() {
-		return timetamp;
+	public LocalDateTime getTimestamp() {
+		return timestamp;
 	}
-	public void setTimetamp(LocalDateTime timetamp) {
-		this.timetamp = timetamp;
+	public void setTimestamp(LocalDateTime timestamp) {
+		this.timestamp = timestamp;
 	}
 }
