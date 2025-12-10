@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai?serverTimezone=Asia/Seoul
+    username: root
+    password: a1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+
+jwt:
+  secret: your-very-strong-jwt-secret-key-change-this
+  expiration-ms: 3600000   # 1 hour
+
+ai:
+  free-daily-limit: 100     # FREE 유저 하루 100회 제한 (예시)

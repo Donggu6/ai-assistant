@@ -1,42 +1,52 @@
 package com.deongeon.ai.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.deongeon.ai.dto.AiRequestDto;
+import com.deongeon.ai.model.User;
+import com.deongeon.ai.repository.UserRepository;
 import com.deongeon.ai.service.AiService;
-import com.deongeon.ai.service.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/ai")
 public class AiController {
 
-    @Autowired
-    private AiService aiService;
+	private final AiService aiService;
+	private final UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	public AiController(AiService aiService, UserRepository userRepository) {
+		this.aiService = aiService;
+		this.userRepository = userRepository;
+	}
 
-    @PostMapping("/send")
-    public String sendRequest(@RequestParam Long userId,
-                              @RequestParam String prompt) {
-        try {
-            // 1. 사용자 존재 여부 검증
-            userService.getUser(userId);
+	@PostMapping("/send")
+	public ResponseEntity<?> sendPrompt(@RequestBody AiRequestDto dto, Authentication auth) {
+		// JWT 인증된 사용자 이메일 가져오기
+		String email = auth.getName();
 
-            // 2. FREE 유저면 사용량 제한 체크
-            aiService.validateUsage(userId);
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-            // 3. AI 호출
-            String result = aiService.callAI(prompt);
+		// 제한 체크 (FREE 요금제)
+		aiService.validateLimit(user);
 
-            // 4. 사용량 증가 및 기록 저장
-            userService.increaseUsage(userId);
-            aiService.saveRequest(userId, prompt, result);
+		// 실제 AI 호출
+		String response = aiService.callAI(dto.getPrompt());
 
-            // 5. 결과 반환
-            return result;
+		// 사용량 증가
+		aiService.increaseUsage(user);
 
-        } catch (RuntimeException e) {
-            return "Error: " + e.getMessage();
-        }
-    }
+		// 로그 저장
+		aiService.saveLog(user.getId(), dto.getPrompt(), response);
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/test")
+	public String test() {
+		return "AI API OK";
+	}
 }
