@@ -1,0 +1,13 @@
+### AI 요청 테스트
+POST http://localhost:8081/api/ai/send?userId=1&prompt=안녕
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+
+
+###
+
+### 사용자 목록 조회 (예시)
+GET http://localhost:8081/api/users
+Accept: application/json
+
+###

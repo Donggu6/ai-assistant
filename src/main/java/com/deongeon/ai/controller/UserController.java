@@ -2,7 +2,6 @@ package com.deongeon.ai.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import com.deongeon.ai.model.User;
 import com.deongeon.ai.service.UserService;
 
@@ -15,19 +14,15 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/register")
-    public User register(
-            @RequestParam String email,
-            @RequestParam String password
-    ) {
+    public User register(@RequestParam String email,
+                         @RequestParam String password) {
         return userService.register(email, password);
     }
 
     // 로그인
     @PostMapping("/login")
-    public User login(
-            @RequestParam String email,
-            @RequestParam String password
-    ) {
+    public User login(@RequestParam String email,
+                      @RequestParam String password) {
         return userService.login(email, password);
     }
 

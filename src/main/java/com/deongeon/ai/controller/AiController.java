@@ -2,7 +2,6 @@ package com.deongeon.ai.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import com.deongeon.ai.service.AiService;
 import com.deongeon.ai.service.UserService;
 
@@ -17,10 +16,8 @@ public class AiController {
     private UserService userService;
 
     @PostMapping("/send")
-    public String sendRequest(
-        @RequestParam Long userId,
-        @RequestParam String prompt
-    ) {
+    public String sendRequest(@RequestParam Long userId,
+                              @RequestParam String prompt) {
         try {
             // 1. 사용자 존재 여부 검증
             userService.getUser(userId);
@@ -35,11 +32,10 @@ public class AiController {
             userService.increaseUsage(userId);
             aiService.saveRequest(userId, prompt, result);
 
-            // 5. 결과 제공
+            // 5. 결과 반환
             return result;
 
         } catch (RuntimeException e) {
-            // 간단한 예외 메시지 반환
             return "Error: " + e.getMessage();
         }
     }

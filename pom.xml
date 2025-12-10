@@ -24,14 +24,13 @@
     </properties>
 
     <dependencies>
-
-        <!-- Web -->
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- JPA -->
+        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -44,33 +43,29 @@
             <version>8.0.33</version>
         </dependency>
 
-        <!-- H2 Database (Runtime) -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Lombok -->
+        <!-- Lombok (선택적) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!-- Test -->
+        <!-- Spring Boot Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Security (비밀번호 암호화용) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-
-            <!-- Java Compile 설정 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -83,13 +78,10 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-
-            <!-- Spring Boot 실행 플러그인 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
         </plugins>
     </build>
 

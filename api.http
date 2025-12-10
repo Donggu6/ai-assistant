@@ -1,0 +1,15 @@
+### 1. 회원가입
+POST  http://localhost:8080/api/user/register
+Content-Type: application/x-www-form-urlencoded
+
+email=test@example.com&password=1234
+
+###
+
+### 2. 로그인
+POST  http://localhost:8080/api/user/login
+Content-Type: application/x-www-form-urlencoded
+
+email=test@example.com&password=1234
+
+### (중략: 나머지 요청도 동일하게 붙여넣기)
