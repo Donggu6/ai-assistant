@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI CONSOLE</title>
+</head>
+<body>
+	<h2>AI CONSOLE</h2>
+
+	<input id="prompt" placeholder="질문 입력" style="width: 400px;">
+	<button onclick="ask()">ASK</button>
+
+	<pre id="out"></pre>
+
+	<script>
+function ask(){
+  const email = localStorage.getItem("email");
+  if(!email){ location.href="/login.html"; return; }
+
+  const prompt = document.getElementById("prompt").value;
+  fetch("/api/ai/ask?email="+encodeURIComponent(email)+"&prompt="+encodeURIComponent(prompt),{
+    method:"POST"
+  }).then(r=>r.text()).then(t=>{
+    document.getElementById("out").textContent = t;
+  });
+}
+</script>
+</body>
+</html>

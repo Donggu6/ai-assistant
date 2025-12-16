@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>REGISTER</title>
+</head>
+<body>
+	<h2>REGISTER</h2>
+
+	<input id="email" placeholder="email">
+	<br>
+	<br>
+	<input id="password" type="password" placeholder="password">
+	<br>
+	<br>
+
+	<button onclick="reg()">REGISTER</button>
+	<br>
+	<br>
+	<a href="/login.html">로그인</a>
+
+	<script>
+function reg(){
+  fetch("/api/auth/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      email:document.getElementById("email").value,
+      password:document.getElementById("password").value
+    })
+  }).then(r=>r.json()).then(d=>{
+    alert(d.message);
+    if(d.message==="REGISTER_SUCCESS"){
+      location.href="/login.html";
+    }
+  });
+}
+</script>
+</body>
+</html>

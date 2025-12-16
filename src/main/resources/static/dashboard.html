@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DASHBOARD</title>
+</head>
+<body>
+	<h2>DASHBOARD</h2>
+
+	<button onclick="goConsole()">AI Console</button>
+	<button onclick="upgrade()">Upgrade (Stripe)</button>
+	<button onclick="logout()">Logout</button>
+
+	<script>
+function goConsole(){
+  if(!localStorage.getItem("email")){
+    alert("로그인 필요");
+    location.href="/login.html";
+    return;
+  }
+  location.href="/console.html";
+}
+function logout(){
+  localStorage.removeItem("email");
+  location.href="/login.html";
+}
+function upgrade(){
+  fetch("/api/payment/create-checkout-session",{method:"POST"})
+    .then(r=>r.json())
+    .then(d=> location.href=d.url);
+}
+</script>
+</body>
+</html>

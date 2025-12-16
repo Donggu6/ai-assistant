@@ -2,21 +2,26 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: ai-assistant
+
   datasource:
-    url: jdbc:mysql://localhost:3306/ai?serverTimezone=Asia/Seoul
-    username: root
-    password: a1234
+    url: jdbc:postgresql://localhost:5432/ai_assistant
+    username: ai_user
+    password: ai_user_pw123!
+    driver-class-name: org.postgresql.Driver
 
   jpa:
+    open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
-      hibernate.format_sql: true
+      hibernate:
+        default_schema: ai
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
-jwt:
-  secret: your-very-strong-jwt-secret-key-change-this
-  expiration-ms: 3600000   # 1 hour
-
-ai:
-  free-daily-limit: 100     # FREE 유저 하루 100회 제한 (예시)
+logging:
+  level:
+    org.hibernate.SQL: DEBUG

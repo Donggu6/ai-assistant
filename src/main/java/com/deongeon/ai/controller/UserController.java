@@ -1,41 +1,21 @@
 package com.deongeon.ai.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.deongeon.ai.model.User;
-import com.deongeon.ai.service.UserService;
+import com.deongeon.ai.domain.AppUser;
+import com.deongeon.ai.service.AppUserService;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+	private final AppUserService userService;
 
-    // 회원가입
-    @PostMapping("/register")
-    public User register(@RequestParam String email,
-                         @RequestParam String password) {
-        return userService.register(email, password);
-    }
+	public UserController(AppUserService userService) {
+		this.userService = userService;
+	}
 
-    // 로그인
-    @PostMapping("/login")
-    public User login(@RequestParam String email,
-                      @RequestParam String password) {
-        return userService.login(email, password);
-    }
-
-    // 구독 업그레이드
-    @PostMapping("/upgrade")
-    public User upgradeToPremium(@RequestParam Long userId) {
-        userService.upgradeToPremium(userId);
-        return userService.getUser(userId);
-    }
-
-    // 사용자 조회
-    @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        return userService.getUser(id);
-    }
+	@GetMapping("/{id}")
+	public AppUser getUser(@PathVariable Long id) {
+		return userService.getUser(id);
+	}
 }
