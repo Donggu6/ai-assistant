@@ -8,7 +8,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ai_assistant
     username: ai_user
-    password: ai_user_pw123!
+    password: "ai_user_pw123!"
     driver-class-name: org.postgresql.Driver
 
   jpa:
