@@ -10,7 +10,7 @@ spring:
     username: ai_user
     password: "ai_user_pw123!"
     driver-class-name: org.postgresql.Driver
-
+#  postgres: postgres123!
   jpa:
     open-in-view: false
     hibernate:
