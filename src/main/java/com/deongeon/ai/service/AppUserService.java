@@ -1,36 +1,30 @@
 package com.deongeon.ai.service;
 
-import com.deongeon.ai.domain.AppUser;
-import com.deongeon.ai.domain.Role;
-import com.deongeon.ai.dto.RegisterRequest;
-import com.deongeon.ai.dto.RegisterResponse;
-import com.deongeon.ai.repository.AppUserRepository;
-import com.deongeon.ai.security.JwtTokenProvider;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.deongeon.ai.domain.AppUser;
+import com.deongeon.ai.repository.AppUserRepository;
 
 @Service
 public class AppUserService {
 
-	private final AppUserRepository repository;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtTokenProvider jwtTokenProvider;
+	private final AppUserRepository appUserRepository;
 
-	public AppUserService(AppUserRepository repository, PasswordEncoder passwordEncoder,
-			JwtTokenProvider jwtTokenProvider) {
-		this.repository = repository;
-		this.passwordEncoder = passwordEncoder;
-		this.jwtTokenProvider = jwtTokenProvider;
+	@Autowired
+	public AppUserService(AppUserRepository appUserRepository) {
+		this.appUserRepository = appUserRepository;
 	}
 
-	public RegisterResponse register(RegisterRequest req) {
-		AppUser user = new AppUser();
-		user.setEmail(req.email());
-		user.setPassword(passwordEncoder.encode(req.password()));
-		user.setRole(Role.USER);
+	// 회원 가입 (실전에서는 비밀번호 암호화 필요)
+	public AppUser register(String email, String password) {
+		AppUser user = new AppUser(email, password);
+		user.setRole("FREE");
+		user.setUsageCount(0);
+		return appUserRepository.save(user);
+	}
 
-		AppUser saved = repository.save(user);
-
-		return new RegisterResponse(saved.getId(), saved.getEmail(), saved.getRole().name());
+	public AppUser findByEmail(String email) {
+		return appUserRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + email));
 	}
 }

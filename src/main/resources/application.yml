@@ -2,26 +2,13 @@ server:
   port: 8080
 
 spring:
-  application:
-    name: ai-assistant
-
   datasource:
     url: jdbc:postgresql://localhost:5432/ai_assistant
     username: ai_user
-    password: "ai_user_pw123!"
+    password: ai_user_pw123!
     driver-class-name: org.postgresql.Driver
-#  postgres: postgres123!
+
   jpa:
-    open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        default_schema: ai
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
-logging:
-  level:
-    org.hibernate.SQL: DEBUG

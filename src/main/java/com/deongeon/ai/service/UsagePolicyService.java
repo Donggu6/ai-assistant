@@ -1,38 +1,45 @@
 package com.deongeon.ai.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.deongeon.ai.domain.AppUser;
 import com.deongeon.ai.repository.AppUserRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UsagePolicyService {
 
-	private final AppUserRepository userRepo;
+	public static final int FREE_MAX = 10;
 
-	// 정책 (나중에 yml로 뺄 수 있음)
-	private static final int FREE_MAX = 20; // FREE 하루 20회
-	private static final int PREMIUM_MAX = 1000; // PREMIUM 사실상 무제한
+	private final AppUserRepository appUserRepository;
 
-	public UsagePolicyService(AppUserRepository userRepo) {
-		this.userRepo = userRepo;
+	@Autowired
+	public UsagePolicyService(AppUserRepository appUserRepository) {
+		this.appUserRepository = appUserRepository;
 	}
 
-	@Transactional
+	// 이메일로 유저 찾아서 검증 + 사용량 증가까지 한 번에
 	public void validateAndIncrease(String email) {
+		AppUser user = appUserRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + email));
 
-		AppUser user = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
-
-		String plan = user.getPlanType();
-
-		if ("FREE".equalsIgnoreCase(plan)) {
-			if (user.getUsageCount() >= FREE_MAX) {
-				throw new RuntimeException("FREE_LIMIT_EXCEEDED");
-			}
+		if ("FREE".equalsIgnoreCase(user.getRole()) && user.getUsageCount() >= FREE_MAX) {
+			throw new RuntimeException("무료 사용 한도를 초과했습니다.");
 		}
 
-		// PREMIUM은 거의 제한 없음 (원하면 조건 추가)
 		user.setUsageCount(user.getUsageCount() + 1);
-		userRepo.save(user);
+		appUserRepository.save(user);
+	}
+
+	// 필요하면 AppUser 객체로 쓰는 버전도 사용 가능
+	public void validate(AppUser user) {
+		if ("FREE".equalsIgnoreCase(user.getRole()) && user.getUsageCount() >= FREE_MAX) {
+			throw new RuntimeException("무료 사용 한도를 초과했습니다.");
+		}
+	}
+
+	public void increase(AppUser user) {
+		user.setUsageCount(user.getUsageCount() + 1);
+		appUserRepository.save(user);
 	}
 }

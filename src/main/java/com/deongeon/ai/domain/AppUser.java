@@ -1,42 +1,42 @@
 package com.deongeon.ai.domain;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
-@Table(name = "app_user", schema = "ai", uniqueConstraints = @UniqueConstraint(name = "uk_app_user_email", columnNames = "email"))
 public class AppUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
-
-	@Column(nullable = false, length = 255)
 	private String email;
+	private String password;
 
-	@Column(nullable = false, length = 255)
-	private String password; // ✅ BCrypt 해시 저장
+	// FREE / PREMIUM
+	private String role;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false, length = 20)
-	private Role role = Role.USER;
-
-	@Column(nullable = false)
-	private String planType; // FREE / PREMIUM
-
-	@Column(nullable = false)
+	// 사용량 카운트
 	private int usageCount;
 
-	// --- getters/setters ---
+	public AppUser() {
+	}
+
+	public AppUser(String email, String password) {
+		this.email = email;
+		this.password = password;
+		this.role = "FREE"; // 기본 FREE 유저
+		this.usageCount = 0;
+	}
+
 	public Long getId() {
 		return id;
 	}
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getEmail() {
@@ -55,20 +55,12 @@ public class AppUser {
 		this.password = password;
 	}
 
-	public Role getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(Role role) {
+	public void setRole(String role) {
 		this.role = role;
-	}
-
-	public String getPlanType() {
-		return planType;
-	}
-
-	public void setPlanType(String planType) {
-		this.planType = planType;
 	}
 
 	public int getUsageCount() {

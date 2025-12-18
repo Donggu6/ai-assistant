@@ -1,33 +1,21 @@
 package com.deongeon.ai.security;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtTokenProvider {
 
-	@Value("${jwt.secret}")
-	private String secret;
-
-	@Value("${jwt.expiration}")
-	private long expiration;
+	// TODO: 실전에서는 환경 변수나 설정 파일에서 불러오기
+	private final String secretKey = "my-secret-key-for-jwt-should-be-long";
 
 	public String createToken(String email) {
-		return Jwts.builder().setSubject(email).setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + expiration))
-				.signWith(SignatureAlgorithm.HS256, secret).compact();
+		return Jwts.builder().setSubject(email).signWith(SignatureAlgorithm.HS256, secretKey).compact();
 	}
 
 	public String getEmail(String token) {
-		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
-	}
-	
-	public long getAccessTokenExpiresAtEpochMs() {
-		return System.currentTimeMillis() + expiration;
+		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
 	}
 }
-
