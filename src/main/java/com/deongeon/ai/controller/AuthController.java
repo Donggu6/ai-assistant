@@ -1,46 +1,45 @@
 package com.deongeon.ai.controller;
 
-import com.deongeon.ai.domain.AppUser;
-import com.deongeon.ai.security.JwtTokenProvider;
-import com.deongeon.ai.service.AppUserService;
+import com.deongeon.ai.dto.ApiResponse;
+import com.deongeon.ai.dto.LoginRequest;
+import com.deongeon.ai.dto.LoginResponse;
+import com.deongeon.ai.dto.LogoutRequest;
+import com.deongeon.ai.dto.RefreshRequest;
+import com.deongeon.ai.dto.RegisterRequest;
+import com.deongeon.ai.dto.RegisterResponse;
+import com.deongeon.ai.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-	private final AppUserService userService;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtTokenProvider jwtProvider;
+	private final AuthService authService;
 
-	public AuthController(AppUserService userService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtProvider) {
-		this.userService = userService;
-		this.passwordEncoder = passwordEncoder;
-		this.jwtProvider = jwtProvider;
+	public AuthController(AuthService authService) {
+		this.authService = authService;
 	}
 
-	// ✅ 회원가입
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody Map<String, String> req) {
-		AppUser user = userService.createUser(req.get("email"), req.get("password"));
-		return ResponseEntity.ok("REGISTERED");
+	public ResponseEntity<ApiResponse<RegisterResponse>> register(@RequestBody RegisterRequest req) {
+		return ResponseEntity.ok(ApiResponse.ok(authService.register(req)));
 	}
 
-	// ✅ 로그인
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody Map<String, String> req) {
-		AppUser user = userService.getByEmail(req.get("email"));
-
-		if (!passwordEncoder.matches(req.get("password"), user.getPassword())) {
-			return ResponseEntity.status(401).body("INVALID_PASSWORD");
-		}
-
-		String token = jwtProvider.createToken(user.getId(), user.getRole());
-
-		return ResponseEntity.ok(Map.of("token", token));
+	public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest req) {
+		return ResponseEntity.ok(ApiResponse.ok(authService.login(req)));
 	}
+
+	@PostMapping("/refresh")
+	public ResponseEntity<ApiResponse<LoginResponse>> refresh(@RequestBody RefreshRequest req) {
+		return ResponseEntity.ok(ApiResponse.ok(authService.refresh(req.refreshToken())));
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<ApiResponse<String>> logout(@RequestBody LogoutRequest req) {
+		authService.logout(req.refreshToken());
+		return ResponseEntity.ok(ApiResponse.ok("LOGOUT_OK"));
+	}
+
 }

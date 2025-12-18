@@ -1,8 +1,8 @@
 package com.deongeon.ai.security;
 
-import com.deongeon.ai.domain.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -10,12 +10,24 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-	private final String SECRET_KEY = "ai-assistant-secret-key"; // 나중에 yml로 이동
-	private final long EXPIRATION = 1000 * 60 * 60; // 1시간
+	@Value("${jwt.secret}")
+	private String secret;
 
-	public String createToken(Long userId, Role role) {
-		return Jwts.builder().setSubject(String.valueOf(userId)).claim("role", role.name()).setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-				.signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+	@Value("${jwt.expiration}")
+	private long expiration;
+
+	public String createToken(String email) {
+		return Jwts.builder().setSubject(email).setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + expiration))
+				.signWith(SignatureAlgorithm.HS256, secret).compact();
+	}
+
+	public String getEmail(String token) {
+		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+	}
+	
+	public long getAccessTokenExpiresAtEpochMs() {
+		return System.currentTimeMillis() + expiration;
 	}
 }
+

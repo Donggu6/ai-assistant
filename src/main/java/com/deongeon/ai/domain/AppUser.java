@@ -24,6 +24,12 @@ public class AppUser {
 	@Column(nullable = false, length = 20)
 	private Role role = Role.USER;
 
+	@Column(nullable = false)
+	private String planType; // FREE / PREMIUM
+
+	@Column(nullable = false)
+	private int usageCount;
+
 	// --- getters/setters ---
 	public Long getId() {
 		return id;
@@ -55,5 +61,21 @@ public class AppUser {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public String getPlanType() {
+		return planType;
+	}
+
+	public void setPlanType(String planType) {
+		this.planType = planType;
+	}
+
+	public int getUsageCount() {
+		return usageCount;
+	}
+
+	public void setUsageCount(int usageCount) {
+		this.usageCount = usageCount;
 	}
 }
