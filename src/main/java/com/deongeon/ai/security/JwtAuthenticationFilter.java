@@ -3,13 +3,17 @@ package com.deongeon.ai.security;
 import java.io.IOException;
 
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
@@ -25,12 +29,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String header = request.getHeader("Authorization");
 
 		if (header != null && header.startsWith("Bearer ")) {
-			String token = header.substring(7);
-			String email = jwtTokenProvider.getEmail(token);
 
-			// TODO: 실전에서는 여기서 Authentication 객체 생성해서
-			// SecurityContextHolder에 넣어주면 됨.
-			System.out.println("JWT 인증 사용자: " + email);
+			String token = header.substring(7);
+			try {
+				String email = jwtTokenProvider.getEmail(token);
+
+				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email, null, null);
+
+				SecurityContextHolder.getContext().setAuthentication(auth);
+
+			} catch (Exception e) {
+				System.out.println("JWT 인증 실패: " + e.getMessage());
+			}
 		}
 
 		filterChain.doFilter(request, response);

@@ -19,14 +19,22 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable())
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(
-						auth -> auth.requestMatchers("/api/users/public", "/api/users/register", "/api/auth/**")
-								.permitAll().anyRequest().authenticated())
-				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
+	public SecurityFilterChain filterChain(HttpSecurity http,
+											JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+		http
+		.csrf(csrf -> csrf.disable()) // <- CSRF 끔 (API 서버니까)
+		.authorizeHttpRequests(auth -> auth
+				.requestMatchers(
+						"/",
+						"/api/**",
+						"/api/auth/**" // ← 회원가입 / 로그인 허용
+				).permitAll()
+				.anyRequest().authenticated()
+				)
+				.addFilterBefore(jwtAuthenticationFilter,
+						org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
+		
+		
 		return http.build();
 		
 	

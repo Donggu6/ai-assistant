@@ -1,21 +1,40 @@
 package com.deongeon.ai.security;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
 
 @Component
 public class JwtTokenProvider {
 
-	// TODO: 실전에서는 환경 변수나 설정 파일에서 불러오기
-	private final String secretKey = "my-secret-key-for-jwt-should-be-long";
+	@Value("${jwt.secret:my-secret-key-12345678901234567890}")
+	private String secretKey;
+
+	private long validityInMs = 1000L * 60 * 60; // 1시간
+
+	private SecretKey getSigningKey() {
+		return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+	}
 
 	public String createToken(String email) {
-		return Jwts.builder().setSubject(email).signWith(SignatureAlgorithm.HS256, secretKey).compact();
+		Date now = new Date();
+		Date expiry = new Date(now.getTime() + validityInMs);
+
+		return Jwts.builder().setSubject(email).setIssuedAt(now).setExpiration(expiry)
+				.signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
 	}
 
 	public String getEmail(String token) {
-		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+		Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+
+		return claims.getSubject();
 	}
 }

@@ -1,9 +1,7 @@
 package com.deongeon.ai.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class AppUser {
@@ -13,30 +11,18 @@ public class AppUser {
 	private Long id;
 
 	private String email;
+
 	private String password;
 
-	// FREE / PREMIUM
-	private String role;
+	private String role; // FREE / PREMIUM
 
-	// 사용량 카운트
-	private int usageCount;
+	private int usageCount; // 하루 사용량
 
-	public AppUser() {
-	}
+	private LocalDate lastUsedDate; // 마지막 사용 날짜
 
-	public AppUser(String email, String password) {
-		this.email = email;
-		this.password = password;
-		this.role = "FREE"; // 기본 FREE 유저
-		this.usageCount = 0;
-	}
-
+	// ---- Getter / Setter ----
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getEmail() {
@@ -70,4 +56,23 @@ public class AppUser {
 	public void setUsageCount(int usageCount) {
 		this.usageCount = usageCount;
 	}
+
+	public LocalDate getLastUsedDate() {
+		return lastUsedDate;
+	}
+
+	public void setLastUsedDate(LocalDate lastUsedDate) {
+		this.lastUsedDate = lastUsedDate;
+	}
+
+	public AppUser() {
+	}
+
+	public AppUser(String email, String password) {
+		this.email = email;
+		this.password = password;
+		this.role = "FREE";
+		this.usageCount = 0;
+	}
+
 }

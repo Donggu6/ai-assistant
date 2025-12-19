@@ -1,45 +1,46 @@
 package com.deongeon.ai.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Service;
 
 import com.deongeon.ai.domain.AppUser;
 import com.deongeon.ai.repository.AppUserRepository;
 
+
 @Service
 public class UsagePolicyService {
 
-	public static final int FREE_MAX = 10;
+	private final AppUserRepository userRepository;
 
-	private final AppUserRepository appUserRepository;
+	private static final int FREE_LIMIT = 5;
 
-	@Autowired
-	public UsagePolicyService(AppUserRepository appUserRepository) {
-		this.appUserRepository = appUserRepository;
-	}
-
-	// 이메일로 유저 찾아서 검증 + 사용량 증가까지 한 번에
+    public UsagePolicyService(AppUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+	
 	public void validateAndIncrease(String email) {
-		AppUser user = appUserRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + email));
 
-		if ("FREE".equalsIgnoreCase(user.getRole()) && user.getUsageCount() >= FREE_MAX) {
-			throw new RuntimeException("무료 사용 한도를 초과했습니다.");
+		AppUser user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+		LocalDate today = LocalDate.now();
+
+		// 날짜가 바뀌면 카운트 리셋
+		if (user.getLastUsedDate() == null || !user.getLastUsedDate().equals(today)) {
+			user.setUsageCount(0);
+			user.setLastUsedDate(today);
 		}
 
-		user.setUsageCount(user.getUsageCount() + 1);
-		appUserRepository.save(user);
-	}
-
-	// 필요하면 AppUser 객체로 쓰는 버전도 사용 가능
-	public void validate(AppUser user) {
-		if ("FREE".equalsIgnoreCase(user.getRole()) && user.getUsageCount() >= FREE_MAX) {
-			throw new RuntimeException("무료 사용 한도를 초과했습니다.");
+		// FREE 제한 체크
+		if ("FREE".equalsIgnoreCase(user.getRole())) {
+			if (user.getUsageCount() >= FREE_LIMIT) {
+				throw new RuntimeException("FREE 요금제 하루 사용량 초과!");
+			}
 		}
-	}
 
-	public void increase(AppUser user) {
+		// 사용량 증가
 		user.setUsageCount(user.getUsageCount() + 1);
-		appUserRepository.save(user);
+
+		userRepository.save(user);
 	}
 }
