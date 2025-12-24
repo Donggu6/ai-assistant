@@ -12,3 +12,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+app:
+  jwt:
+    secret: this-is-a-very-very-very-long-jwt-secret-key-1234567890!!
+    access-token-validity-ms: 3600000
