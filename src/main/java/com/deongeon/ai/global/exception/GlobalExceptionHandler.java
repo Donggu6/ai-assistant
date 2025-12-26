@@ -1,15 +1,27 @@
 package com.deongeon.ai.global.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.deongeon.ai.global.common.ApiResponse;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(RuntimeException.class)
-	public ApiResponse<?> handle(RuntimeException e){
-		return ApiResponse.fail(e.getMessage());
-	}
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRuntimeException(RuntimeException e) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("success", false);
+        body.put("message", e.getMessage());
+        body.put("timestamp", LocalDateTime.now());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(body);
+    }
 }

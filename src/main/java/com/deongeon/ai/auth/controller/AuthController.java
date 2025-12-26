@@ -1,33 +1,28 @@
 package com.deongeon.ai.auth.controller;
 
-import org.springframework.web.bind.annotation.*;
-
+import com.deongeon.ai.auth.dto.AuthResponse;
 import com.deongeon.ai.auth.dto.LoginRequest;
-import com.deongeon.ai.auth.dto.RegisterRequest;
-import com.deongeon.ai.auth.dto.response.LoginResponse;
-import com.deongeon.ai.auth.dto.response.RegisterResponse;
-import com.deongeon.ai.auth.domain.AppUser;
 import com.deongeon.ai.auth.service.AuthService;
-import com.deongeon.ai.global.common.ApiResponse;
-
+import com.deongeon.ai.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-	private final AuthService authService;
+    private final AuthService authService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-	@PostMapping("/register")
-	public ApiResponse<?> register(@RequestBody RegisterRequest req) {
-		AppUser user = authService.register(req);
-		return ApiResponse.ok(RegisterResponse.from(user));
-	}
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request){
 
-	@PostMapping("/login")
-	public ApiResponse<?> login(@RequestBody LoginRequest req) {
-		LoginResponse response = authService.login(req);
-		return ApiResponse.ok(response);
-	}
+        var user = authService.login(request);
+
+        String token = jwtTokenProvider.createToken(user.getEmail());
+
+        return ResponseEntity.ok(new AuthResponse(token));
+    }
 }
