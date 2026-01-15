@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>AI 코치 | Ailogic</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="/assets/css/common.css">
+
+<style>
+/* ===== Chat Layout ===== */
+.chat-container {
+	max-width: 900px;
+	margin: 40px auto 0;
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 140px);
+	background: rgba(2, 6, 23, .6);
+	border: 1px solid rgba(148, 163, 184, .18);
+	border-radius: 22px;
+	overflow: hidden;
+}
+
+.chat-header {
+	padding: 18px 22px;
+	border-bottom: 1px solid var(--line2);
+	font-weight: 800;
+	font-size: 1.1rem;
+	background: rgba(15, 23, 42, .9);
+}
+
+.chat-messages {
+	flex: 1;
+	padding: 26px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.msg {
+	max-width: 72%;
+	padding: 14px 18px;
+	border-radius: 18px;
+	line-height: 1.6;
+	font-size: .95rem;
+	animation: fadeUp .4s ease both;
+}
+
+.msg.ai {
+	background: rgba(99, 102, 241, .12);
+	border: 1px solid rgba(99, 102, 241, .25);
+	align-self: flex-start;
+	border-top-left-radius: 6px;
+}
+
+.msg.user {
+	background: rgba(148, 163, 184, .12);
+	border: 1px solid rgba(148, 163, 184, .25);
+	align-self: flex-end;
+	border-top-right-radius: 6px;
+	text-align: right;
+}
+
+.chat-input {
+	display: flex;
+	padding: 18px;
+	border-top: 1px solid var(--line2);
+	gap: 12px;
+	background: rgba(15, 23, 42, .9);
+}
+
+.chat-input input {
+	flex: 1;
+	padding: 14px 16px;
+	border-radius: 14px;
+	border: 1px solid rgba(148, 163, 184, .25);
+	background: rgba(2, 6, 23, .7);
+	color: #fff;
+	outline: none;
+}
+
+.chat-input button {
+	padding: 0 22px;
+	border-radius: 14px;
+	font-weight: 800;
+	border: none;
+	background: linear-gradient(135deg, var(--brand1), var(--brand2));
+	color: #fff;
+	cursor: pointer;
+	transition: all .2s ease;
+}
+
+.chat-input button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 10px 30px rgba(99, 102, 241, .3);
+}
+</style>
+</head>
+<body>
+
+	<nav class="nav">
+		<div class="nav-inner">
+			<a class="brand" href="index.html"> <span class="brand-badge"></span>Ailogic
+			</a>
+			<div class="menu">
+				<a href="index.html">홈</a> <a href="features.html">기능</a> <a
+					href="about.html">소개</a> <a class="cta" href="logout.html">로그아웃</a>
+			</div>
+		</div>
+	</nav>
+
+	<div class="chat-container">
+		<div class="chat-header">AI 코치</div>
+
+		<div class="chat-messages" id="chatBox">
+			<div class="msg ai">
+				안녕하세요. 저는 Ailogic AI 코치입니다.<br> 어떤 비즈니스를 계획 중인지 알려주시면<br>
+				수익 구조부터 전략까지 함께 설계해드릴게요.
+			</div>
+		</div>
+
+		<div class="chat-input">
+			<input id="userInput" type="text" placeholder="예: 해외 구매대행 시작하고 싶어요" />
+			<button onclick="sendMessage()">전송</button>
+		</div>
+	</div>
+
+	<script>
+  const chatBox = document.getElementById("chatBox");
+  const userInput = document.getElementById("userInput");
+
+  function addMessage(text, sender) {
+    const msg = document.createElement("div");
+    msg.className = "msg " + sender;
+    msg.innerHTML = text;
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function sendMessage() {
+    const text = userInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    userInput.value = "";
+
+    // 🔥 실제 AI API 연결 자리
+    setTimeout(() => {
+      addMessage(
+        "좋아요. 먼저 목표 시장과 예산 규모부터 알려주세요.<br>예: 스마트스토어 / 쿠팡 / 해외몰",
+        "ai"
+      );
+    }, 700);
+  }
+
+  userInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>
+
+</body>
+</html>

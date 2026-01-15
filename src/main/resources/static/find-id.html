@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>아이디 찾기</title>
+  <style>
+    body{font-family:system-ui,sans-serif;margin:0;background:#f6f7fb;}
+    .wrap{max-width:420px;margin:60px auto;background:#fff;padding:24px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.06);}
+    h1{margin:0 0 12px;font-size:20px;}
+    .row{margin:12px 0;}
+    label{display:block;font-size:12px;margin-bottom:6px;color:#444;}
+    input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;outline:none;}
+    button{width:100%;padding:12px;border:0;border-radius:10px;cursor:pointer;font-weight:700;}
+    .btn{background:#111;color:#fff;}
+    .btn2{background:#e5e7eb;margin-top:10px;}
+    .msg{margin-top:12px;font-size:13px;white-space:pre-wrap;color:#333;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>아이디(이메일) 찾기</h1>
+    <div class="row">
+      <label>전화번호</label>
+      <input id="phone" type="tel" placeholder="01012345678" />
+    </div>
+    <button class="btn" id="btnFind">찾기</button>
+    <button class="btn2" onclick="location.href='/login.html'">로그인으로</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script>
+    const msg = (t)=>document.getElementById('msg').textContent=t||'';
+    document.getElementById('btnFind').onclick = async ()=>{
+      const phone = document.getElementById('phone').value.trim();
+      if(!phone) return msg('전화번호를 입력하세요.');
+
+      try{
+        const res = await fetch('/api/find-id?phone=' + encodeURIComponent(phone));
+        const text = await res.text();
+        if(!res.ok) throw new Error(text || ('HTTP ' + res.status));
+        msg(text);
+      }catch(e){
+        msg('조회 실패: ' + (e.message || e));
+      }
+    };
+  </script>
+</body>
+</html>

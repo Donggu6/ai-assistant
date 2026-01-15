@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Ailogic | 수익 구조를 설계하는 AI 플랫폼</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.css">
+
+<style>
+:root {
+	--bg0: #020617;
+	--bg1: #0f172a;
+	--card: rgba(15, 23, 42, .86);
+	--line: #1e293b;
+	--line2: #1f2937;
+	--txt: #ffffff;
+	--muted: #cbd5f5;
+	--muted2: #94a3b8;
+	--brand1: #6366f1;
+	--brand2: #3b82f6;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Roboto, "Noto Sans KR", sans-serif;
+	letter-spacing: -0.01em;
+	color: var(--txt);
+	background: radial-gradient(circle at 18% 15%, rgba(99, 102, 241, .18),
+		transparent 38%),
+		radial-gradient(circle at 82% 20%, rgba(59, 130, 246, .14),
+		transparent 40%),
+		radial-gradient(circle at 70% 85%, rgba(167, 139, 250, .10),
+		transparent 42%), linear-gradient(180deg, var(--bg0), var(--bg1));
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+a:visited {
+	color: inherit;
+} /* 보라색 방지 */
+a:hover {
+	text-decoration: none;
+}
+
+/* NAV */
+.nav {
+	position: sticky;
+	top: 0;
+	z-index: 999;
+	background: rgba(2, 6, 23, .72);
+	backdrop-filter: blur(10px);
+	border-bottom: 1px solid var(--line2);
+}
+
+.nav-inner {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 14px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.brand {
+	font-weight: 800;
+	letter-spacing: .3px;
+	font-size: 1.05rem;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.brand-badge {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--brand1), var(--brand2));
+	box-shadow: 0 0 0 4px rgba(99, 102, 241, .12);
+}
+
+.menu {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+.menu a {
+	font-size: .92rem;
+	color: var(--muted);
+	padding: 8px 10px;
+	border-radius: 10px;
+	transition: background .15s ease, color .15s ease;
+}
+
+.menu a:hover {
+	color: #fff;
+	background: rgba(148, 163, 184, .10);
+}
+
+.menu a.active {
+	color: #fff;
+	background: rgba(99, 102, 241, .14);
+	border: 1px solid rgba(99, 102, 241, .22);
+}
+
+.menu .cta {
+	color: #fff;
+	font-weight: 700;
+	background: linear-gradient(135deg, var(--brand1), var(--brand2));
+	padding: 9px 14px;
+}
+
+.menu .cta:hover {
+	background: linear-gradient(135deg, var(--brand1), var(--brand2));
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 90px 20px;
+}
+
+.hero {
+	text-align: center;
+	margin-bottom: 110px;
+}
+
+.hero h1 {
+	font-size: 3.4rem;
+	line-height: 1.15;
+	letter-spacing: -.6px;
+	margin: 0 0 18px;
+}
+
+.highlight {
+	background: linear-gradient(90deg, #a5b4fc, #60a5fa);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-weight: 900;
+}
+
+.hero p {
+	color: var(--muted);
+	font-size: 1.08rem;
+	line-height: 1.75;
+	max-width: 820px;
+	margin: 0 auto 14px;
+}
+
+.hero .small {
+	color: var(--muted2);
+	font-size: .95rem;
+	margin-top: 10px;
+}
+
+.hero-actions {
+	margin-top: 26px;
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 14px 22px;
+	border-radius: 16px;
+	font-weight: 800;
+	border: 1px solid rgba(148, 163, 184, .20);
+	background: rgba(148, 163, 184, .08);
+}
+
+.btn.primary {
+	border: none;
+	background: linear-gradient(135deg, var(--brand1), var(--brand2));
+	box-shadow: 0 12px 40px rgba(99, 102, 241, .28);
+}
+
+.btn:hover {
+	transform: translateY(-1px);
+}
+
+.section {
+	margin: 110px 0;
+}
+
+.section-title {
+	text-align: center;
+	font-size: 2.2rem;
+	margin: 0 0 14px;
+	letter-spacing: -.3px;
+}
+
+.section-sub {
+	text-align: center;
+	color: var(--muted2);
+	max-width: 820px;
+	margin: 0 auto 34px;
+	line-height: 1.7;
+}
+
+.divider {
+	width: 76px;
+	height: 4px;
+	border-radius: 10px;
+	background: linear-gradient(90deg, var(--brand1), var(--brand2));
+	margin: 0 auto 46px;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 22px;
+}
+
+.card {
+	background: var(--card);
+	border: 1px solid var(--line);
+	border-radius: 22px;
+	padding: 30px;
+	box-shadow: 0 0 0 1px rgba(99, 102, 241, .06);
+}
+
+.card h3 {
+	margin: 0 0 10px;
+	font-size: 1.2rem;
+}
+
+.card p {
+	margin: 0;
+	color: var(--muted);
+	line-height: 1.7;
+	font-size: .95rem;
+}
+
+.card .meta {
+	margin-top: 10px;
+	color: var(--muted2);
+	font-size: .88rem;
+}
+
+.trustbar {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 14px;
+	margin-top: 26px;
+}
+
+.pill {
+	padding: 14px 16px;
+	border-radius: 16px;
+	background: rgba(148, 163, 184, .08);
+	border: 1px solid rgba(148, 163, 184, .14);
+	color: var(--muted);
+	font-size: .92rem;
+	line-height: 1.5;
+}
+
+.footer {
+	border-top: 1px solid var(--line2);
+	color: #64748b;
+	text-align: center;
+	padding: 42px 0;
+	font-size: .86rem;
+}
+
+/* Dashboard 버튼 가시성 개선 */
+.nav-btn {
+	padding: 10px 18px;
+	border-radius: 14px;
+	background: rgba(99, 102, 241, .22);
+	color: #eaf0ff;
+	font-weight: 800;
+	border: 1px solid rgba(99, 102, 241, .45);
+	cursor: pointer;
+	box-shadow: 0 0 0 1px rgba(99, 102, 241, .15);
+}
+
+.nav-btn:hover {
+	background: rgba(99, 102, 241, .35);
+}
+</style>
+</head>
+<body>
+
+	<nav class="nav">
+		<div class="nav-inner">
+			<a class="brand" href="index.html" aria-label="Ailogic Home"> <span
+				class="brand-badge"></span> Ailogic
+			</a>
+			<div class="menu">
+				<a class="active" href="index.html">홈</a> <a href="features.html">기능</a>
+				<a href="plan-description.html">요금제</a> <a href="about.html">소개</a>
+				<button onclick="goDashboard()" class="nav-btn">대시보드</button>
+				<a class="cta" href="login.html">로그인</a>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+		<section class="hero">
+			<h1>
+				<span class="highlight">수익 구조를 설계하는</span><br>AI 기반 의사결정 플랫폼
+			</h1>
+			<p>Ailogic은 해외 구매대행을 위한 상품 분석, 수익 구조 검증, 가격 추적, 전략 수립을 하나의 데이터
+				흐름으로 통합합니다.</p>
+			<div class="small">감이 아닌 근거로 판단하고, 실행 가능한 전략으로 연결합니다.</div>
+
+			<div class="hero-actions">
+				<a class="btn primary" href="plan-description.html">요금제 확인</a> <a
+					class="btn" href="features.html">기능 먼저 보기</a> <a class="btn"
+					href="dashboard.html">대시보드 체험</a>
+			</div>
+
+			<div class="trustbar">
+				<div class="pill">
+					환율·수수료·배송비 등 비용 요소를 반영한 <b>실수익</b> 관점
+				</div>
+				<div class="pill">
+					시장 가격 변동을 추적해 <b>타이밍 리스크</b> 감소
+				</div>
+				<div class="pill">
+					의사결정 근거를 문서화하는 <b>리포트/견적 흐름</b>
+				</div>
+			</div>
+		</section>
+
+		<section class="section">
+			<h2 class="section-title">왜 Ailogic인가</h2>
+			<div class="section-sub">단순 자동화가 아니라, “수익을 만드는 구조”를 설계하도록 돕습니다.</div>
+			<div class="divider"></div>
+
+			<div class="grid">
+				<div class="card">
+					<h3>직감이 아닌 데이터</h3>
+					<p>시장 가격, 수요 흐름, 비용 구조를 종합해 선택의 근거를 제공합니다.</p>
+					<div class="meta">불확실성을 줄이고 재현 가능한 판단을 지향</div>
+				</div>
+				<div class="card">
+					<h3>계산이 아닌 설계</h3>
+					<p>마진을 “그때그때 계산”하지 않고, 지속 가능한 운영 구조로 정리합니다.</p>
+					<div class="meta">손익 구조를 명확하게 만드는 프레임</div>
+				</div>
+				<div class="card">
+					<h3>도구가 아닌 시스템</h3>
+					<p>분석 → 견적 → 실행 → 추적까지 업무 흐름을 하나의 화면에서 연결합니다.</p>
+					<div class="meta">운영 효율을 높이는 워크플로우</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section">
+			<h2 class="section-title">바로 실행 가능한 기능</h2>
+			<div class="section-sub">실무에서 “지금 필요한 것” 위주로 구성했습니다.</div>
+			<div class="divider"></div>
+
+			<div class="grid">
+				<div class="card">
+					<h3>상품 수익성 분석</h3>
+					<p>가격·원가·수요·경쟁을 종합해 수익 가능성을 평가합니다.</p>
+				</div>
+				<div class="card">
+					<h3>마진 구조 계산</h3>
+					<p>환율/배송/수수료까지 반영해 실수익 기준으로 판단합니다.</p>
+				</div>
+				<div class="card">
+					<h3>시장 모니터링</h3>
+					<p>가격 변동·급등락·이상징후를 추적해 타이밍 리스크를 줄입니다.</p>
+				</div>
+				<div class="card">
+					<h3>리포트 & 견적</h3>
+					<p>의사결정 근거를 문서화해 팀/고객 대응에 바로 활용합니다.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="section hero" style="margin-bottom: 0;">
+			<h2 class="section-title">수익은 우연이 아니라 설계의 결과</h2>
+			<div class="section-sub">지금, Ailogic의 흐름으로 운영 방식을 바꿔보세요.</div>
+			<div class="hero-actions" style="margin-top: 18px;">
+				<a class="btn primary" href="plan-description.html">요금제 확인</a> <a
+					class="btn" href="about.html">신뢰/소개 보기</a>
+			</div>
+		</section>
+	</div>
+
+	<div class="footer">© 2026 Ailogic. All rights reserved.</div>
+	<script src="/assets/js/guard.js"></script>
+	<script src="assets/js/theme.js"></script>
+</body>
+</html>

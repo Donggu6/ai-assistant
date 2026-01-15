@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Login Success</title>
+</head>
+<body>
+	<h1>로그인 성공 🎉</h1>
+	<p id="info"></p>
+
+	<script>
+		const params = new URLSearchParams(window.location.search);
+		const token = params.get("token");
+		const plan = params.get("plan");
+
+		document.getElementById("info").innerText = "PLAN: " + plan
+				+ "\nTOKEN: " + token;
+
+		// 예: 대시보드로 이동
+		// location.href = "/dashboard.html";
+	</script>
+</body>
+</html>

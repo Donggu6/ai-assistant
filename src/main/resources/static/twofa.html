@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>2FA Verify</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f6f7fb; }
+    .wrap { max-width: 420px; margin: 60px auto; background: #fff; padding: 24px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+    h1 { margin: 0 0 12px; font-size: 20px; }
+    .row { margin: 12px 0; }
+    label { display:block; font-size: 12px; margin-bottom: 6px; color:#444; }
+    input { width:100%; padding: 12px; border:1px solid #ddd; border-radius: 10px; outline:none; letter-spacing: 4px; text-align:center; font-size: 18px; }
+    button { width:100%; padding: 12px; border:0; border-radius: 10px; cursor:pointer; font-weight:700; }
+    .btn { background:#111; color:#fff; }
+    .btn2 { background:#e5e7eb; margin-top:10px; }
+    .msg { margin-top:12px; font-size: 13px; white-space: pre-wrap; color:#333; }
+    .hint { font-size:12px; color:#666; margin-top:8px; line-height:1.5; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>2차 인증</h1>
+
+    <div class="row">
+      <label>인증 코드 (6자리)</label>
+      <input id="code" inputmode="numeric" maxlength="6" placeholder="123456" />
+    </div>
+
+    <button class="btn" id="btnVerify">인증 완료</button>
+    <button class="btn2" id="btnGoLogin">로그인으로</button>
+    <button class="btn2" id="btnGoMain">메인으로</button>
+
+    <div class="hint">
+      * 현재는 이메일 발송 대신 서버 콘솔에 코드가 출력됩니다.<br/>
+      * 콘솔에서 [2FA CODE]를 확인하세요.
+    </div>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script src="/assets/js/auth.js"></script>
+  <script>
+    const msg = (t) => document.getElementById("msg").textContent = t;
+    const qs = new URLSearchParams(location.search);
+    const twoFactorToken = qs.get("twoFactorToken");
+
+    if (!twoFactorToken) {
+      msg("2차 인증 토큰이 없습니다. 로그인부터 다시 하세요.");
+    }
+
+    document.getElementById("btnGoLogin").addEventListener("click", () => {
+      location.href = "/login.html";
+    });
+    document.getElementById("btnGoMain").addEventListener("click", () => {
+      location.href = "/index.html";
+    });
+
+    document.getElementById("btnVerify").addEventListener("click", async () => {
+      const code = document.getElementById("code").value.trim();
+      if (!twoFactorToken) return;
+      if (!/^\d{6}$/.test(code)) return msg("6자리 숫자 코드를 입력하세요.");
+
+      try {
+        const data = await AuthApi.verify2fa(twoFactorToken, code);
+
+        if (!data.token) return msg("인증 실패: token 응답이 없음");
+
+        localStorage.setItem("ai_token", data.token);
+        localStorage.setItem("ai_plan", data.plan || "FREE");
+
+        msg("2차 인증 성공! 토큰 저장 완료\n대시보드로 이동합니다.");
+        location.href = "/dashboard.html";
+
+      } catch (e) {
+        msg("2차 인증 실패: " + (e.message || e));
+      }
+    });
+  </script>
+</body>
+</html>

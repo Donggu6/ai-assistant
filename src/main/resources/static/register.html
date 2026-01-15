@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Register</title>
+<style>
+body {
+	font-family: system-ui, sans-serif;
+	margin: 0;
+	background: #f6f7fb;
+}
+
+.wrap {
+	max-width: 420px;
+	margin: 60px auto;
+	background: #fff;
+	padding: 24px;
+	border-radius: 14px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
+}
+
+h1 {
+	margin: 0 0 12px;
+	font-size: 20px;
+}
+
+.row {
+	margin: 12px 0;
+}
+
+label {
+	display: block;
+	font-size: 12px;
+	margin-bottom: 6px;
+	color: #444;
+}
+
+input {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	outline: none;
+}
+
+.chk {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 14px 0;
+	font-size: 13px;
+	color: #333;
+}
+
+button {
+	width: 100%;
+	padding: 12px;
+	border: 0;
+	border-radius: 10px;
+	cursor: pointer;
+	font-weight: 700;
+}
+
+.btn {
+	background: #111;
+	color: #fff;
+}
+
+.btn2 {
+	background: #e5e7eb;
+	margin-top: 10px;
+}
+
+.msg {
+	margin-top: 12px;
+	font-size: 13px;
+	white-space: pre-wrap;
+	color: #333;
+}
+</style>
+</head>
+<body>
+	<div class="wrap">
+		<h1>회원가입</h1>
+
+		<div class="row">
+			<label>Email</label> <input id="email" type="email"
+				placeholder="test@test.com" />
+		</div>
+
+		<div class="row">
+			<label>Password</label> <input id="pw" type="password"
+				placeholder="1234" />
+		</div>
+
+		<div class="row">
+			<label>Password 확인</label> <input id="pw2" type="password"
+				placeholder="1234" />
+		</div>
+
+		<div class="chk">
+			<input id="twoFactor" type="checkbox" /> <label for="twoFactor"
+				style="margin: 0;">2차 인증 사용</label>
+		</div>
+
+		<button class="btn" id="btnRegister">가입하기</button>
+		<button class="btn2" id="btnGoLogin">로그인으로</button>
+		<button class="btn2" id="btnGoMain">메인으로</button>
+
+		<div class="msg" id="msg"></div>
+	</div>
+
+	<!-- ✅ auth.js 반드시 먼저 -->
+	<script src="/assets/js/auth.js"></script>
+
+	<script>
+    const msg = (t) => document.getElementById("msg").textContent = t;
+
+    document.getElementById("btnGoLogin").onclick = () => location.href = "/login.html";
+    document.getElementById("btnGoMain").onclick = () => location.href = "/index.html";
+
+    document.getElementById("btnRegister").onclick = async () => {
+      const email = emailEl.value.trim();
+      const pw = pwEl.value;
+      const pw2 = pw2El.value;
+      const twoFactorEnabled = twoFactorEl.checked;
+
+      if (!email || !pw) return msg("이메일/비밀번호 입력");
+      if (pw !== pw2) return msg("비밀번호가 일치하지 않음");
+
+      try {
+        await AuthApi.register(email, pw, twoFactorEnabled);
+        msg("회원가입 완료!\n이제 로그인 하세요.");
+        setTimeout(() => location.href = "/login.html", 700);
+      } catch (e) {
+        msg("회원가입 실패: " + (e.message || e));
+      }
+    };
+
+    const emailEl = document.getElementById("email");
+    const pwEl = document.getElementById("pw");
+    const pw2El = document.getElementById("pw2");
+    const twoFactorEl = document.getElementById("twoFactor");
+  </script>
+</body>
+</html>

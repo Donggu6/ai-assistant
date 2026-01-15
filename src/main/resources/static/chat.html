@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI 코치 | Ailogic</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/assets/css/common.css">
+
+  <style>
+    .chat-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      height: 90vh;
+    }
+
+    .chat-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .chat-box {
+      flex: 1;
+      background: rgba(15, 23, 42, .85);
+      border-radius: 18px;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .msg {
+      max-width: 70%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: .95rem;
+      line-height: 1.6;
+      animation: fadeUp .3s ease both;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: #fff;
+    }
+
+    .ai {
+      align-self: flex-start;
+      background: rgba(148,163,184,.12);
+      border: 1px solid rgba(148,163,184,.25);
+      color: #e5e7eb;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(2,6,23,.9);
+      color: #fff;
+      outline: none;
+    }
+
+    .chat-input button {
+      width: 120px;
+      border-radius: 14px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #494a6c, #3b82f6);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><span class="brand-badge"></span>Ailogic</a>
+      <div class="menu">
+        <a href="index.html">홈</a>
+        <a href="features.html">기능</a>
+        <a class="active" href="coach.html">AI 코치</a>
+        <a class="cta" href="dashboard.html">대시보드</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="chat-wrap">
+    <div class="chat-header">
+      <h1>AI 비즈니스 코치</h1>
+      <p>지금 상황을 말해보세요. 현실적인 전략으로 답해줍니다.</p>
+    </div>
+
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="예: 이 상품 마진이 괜찮을까요?" />
+      <button onclick="sendMessage()">전송</button>
+    </div>
+  </div>
+
+  <script src="/assets/js/coach.js"></script>
+</body>
+</html>

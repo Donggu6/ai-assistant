@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI 코치 | Ailogic</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/assets/css/common.css">
+  <style>
+    .wrap{max-width:980px;margin:0 auto;padding:34px 18px 42px;}
+    .top{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px;}
+    .title h1{margin:0;font-size:1.9rem;letter-spacing:-.3px;}
+    .title p{margin:8px 0 0;color:var(--muted2);line-height:1.6;}
+    .panel{
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(15,23,42,.76);
+      border-radius:18px;
+      padding:14px;
+      height:70vh;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+    .chat{flex:1;overflow:auto;padding:8px 10px;display:flex;flex-direction:column;gap:10px;}
+    .msg{max-width:78%;padding:12px 14px;border-radius:14px;line-height:1.55;white-space:pre-wrap;}
+    .msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--brand1),var(--brand2));}
+    .msg.ai{align-self:flex-start;background:rgba(148,163,184,.10);border:1px solid rgba(148,163,184,.16);}
+    .composer{display:flex;gap:10px;margin-top:12px;}
+    .composer input{
+      flex:1;border-radius:14px;border:1px solid rgba(148,163,184,.22);
+      background:rgba(2,6,23,.86);color:#fff;padding:14px 14px;outline:none;
+    }
+    .composer button{
+      width:120px;border-radius:14px;border:none;cursor:pointer;
+      font-weight:900;color:#fff;background:linear-gradient(135deg,#494a6c,var(--brand2));
+    }
+    .hint{margin-top:10px;color:var(--muted2);font-size:.9rem;line-height:1.5}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .chip{padding:8px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.18);background:rgba(148,163,184,.08);cursor:pointer;font-size:.9rem;}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><span class="brand-badge"></span>Ailogic</a>
+      <div class="menu">
+        <a href="index.html">홈</a>
+        <a href="features.html">기능</a>
+        <a class="active" href="coach.html">AI 코치</a>
+        <a class="cta" href="login.html">로그인</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="title">
+        <h1>AI 코치</h1>
+        <p>즉답 + 실행 중심. 숫자/조건을 주면 더 정확해진다.</p>
+        <div class="chips">
+          <div class="chip" data-msg="원가 23000, 판매가 39900, 배송 8000, 수수료 12%, 결제수수료 3% 마진 계산해줘">📊 실수익 계산</div>
+          <div class="chip" data-msg="상품명: 무선청소기, 원가 25000, 배송 9000, 채널: 쿠팡, 목표마진 15% 견적 문구 만들어줘">📄 견적서 문구</div>
+          <div class="chip" data-msg="경쟁가가 37900~41900인데 내 원가가 높아. 가격 전략 3가지 제안해줘">📈 가격 전략</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="chat" id="chat"></div>
+
+      <div class="composer">
+        <input id="input" placeholder="예: 원가/판매가/배송/수수료를 적고 ‘마진 계산’이라고 해봐" />
+        <button id="sendBtn">전송</button>
+      </div>
+
+      <div class="hint">
+        팁) 숫자를 주면 “가능/보류/위험”으로 딱 잘라서 판단해준다.
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/coach.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# Build
+/target/
+
+# Env
+.env
+*.env
+
+# Spring Config (secrets)
+src/main/resources/application.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml
+
+# IDE
+.vscode/
+.idea/
+.settings/
+.classpath
+.project
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Secrets
+*key*
+*secret*
+
+.factorypath

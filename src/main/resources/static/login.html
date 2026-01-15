@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Login</title>
+<style>
+body {
+	font-family: system-ui, sans-serif;
+	margin: 0;
+	background: #f6f7fb;
+}
+
+.wrap {
+	max-width: 420px;
+	margin: 60px auto;
+	background: #fff;
+	padding: 24px;
+	border-radius: 14px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
+}
+
+h1 {
+	margin: 0 0 12px;
+	font-size: 20px;
+}
+
+.row {
+	margin: 12px 0;
+}
+
+label {
+	display: block;
+	font-size: 12px;
+	margin-bottom: 6px;
+	color: #444;
+}
+
+input {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	outline: none;
+}
+
+button {
+	width: 100%;
+	padding: 12px;
+	border: 0;
+	border-radius: 10px;
+	cursor: pointer;
+	font-weight: 700;
+}
+
+.btn {
+	background: #111;
+	color: #fff;
+}
+
+.btn2 {
+	background: #3b82f6;
+	color: #fff;
+	margin-top: 10px;
+}
+
+.btn3 {
+	background: #e5e7eb;
+	margin-top: 10px;
+}
+
+.msg {
+	margin-top: 12px;
+	font-size: 13px;
+	white-space: pre-wrap;
+	color: #333;
+}
+</style>
+</head>
+<body>
+	<div class="wrap">
+		<h1>로그인</h1>
+
+		<div class="row">
+			<label>Email</label> <input id="email" type="email"
+				placeholder="test@test.com" />
+		</div>
+
+		<div class="row">
+			<label>Password</label> <input id="pw" type="password"
+				placeholder="1234" />
+		</div>
+
+		<button class="btn" id="btnLogin">Login</button>
+		<button class="btn2" id="btnGoRegister">Sign_up</button>
+		<button class="btn3" id="btnGoMain">Going Main</button>
+		<br>
+		<hr>
+
+		<button class="btn2"
+			onclick="location.href='/oauth2/authorization/google'">
+			Google로 로그인</button>
+
+		<button class="btn2"
+			onclick="location.href='/oauth2/authorization/naver'">
+			Naver로 로그인</button>
+
+		<button class="btn2"
+			onclick="location.href='/oauth2/authorization/kakao'">
+			Kakao로 로그인</button>
+
+
+
+		<div class="msg" id="msg"></div>
+	</div>
+
+	<script src="/assets/js/auth.js"></script>
+	<script>
+    const msg = (t) => document.getElementById("msg").textContent = t;
+
+    document.getElementById("btnGoRegister").onclick = () => location.href = "/register.html";
+    document.getElementById("btnGoMain").onclick = () => location.href = "/index.html";
+
+    document.getElementById("btnLogin").onclick = async () => {
+      const email = emailEl.value.trim();
+      const password = pwEl.value;
+
+      if (!email || !password) return msg("이메일/비밀번호 입력");
+
+      try {
+        const data = await AuthApi.login(email, password);
+
+        if (data.require2FA) {
+          msg("2차 인증 필요. 코드 입력 페이지로 이동합니다.");
+          location.href = "/twofa.html?twoFactorToken=" +
+            encodeURIComponent(data.twoFactorToken);
+          return;
+        }
+
+        if (!data.token) return msg("로그인 실패: token 없음");
+
+        localStorage.setItem("ai_token", data.token);
+        localStorage.setItem("ai_plan", data.plan || "FREE");
+
+        msg("로그인 성공! 대시보드로 이동합니다.");
+        location.href = "/dashboard.html";
+
+      } catch (e) {
+        msg("로그인 실패: " + (e.message || e));
+      }
+    };
+
+    const emailEl = document.getElementById("email");
+    const pwEl = document.getElementById("pw");
+  </script>
+</body>
+</html>

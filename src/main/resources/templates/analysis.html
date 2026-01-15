@@ -1,0 +1,78 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <script src="/assets/js/theme.js"></script>
+  <title>상품 분석</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Arial; margin: 24px; }
+    .card { max-width: 720px; margin: 0 auto; padding: 18px; border: 1px solid #ddd; border-radius: 14px; }
+    input, button { padding: 12px; border-radius: 10px; border: 1px solid #ccc; }
+    input { width: 100%; }
+    button { cursor: pointer; margin-top: 10px; width: 100%; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .kpi { padding: 12px; border: 1px solid #eee; border-radius: 12px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>상품 분석</h2>
+
+    <label>해외 상품 URL</label>
+    <input id="url" placeholder="https://..." />
+
+    <label style="display:block;margin-top:10px;">예상 판매가(원) (선택)</label>
+    <input id="sell" placeholder="예: 49000" inputmode="numeric"/>
+
+    <button onclick="analyze()">분석하기</button>
+
+    <div id="result" style="display:none;margin-top:16px;">
+      <div class="grid">
+        <div class="kpi"><div>순이익</div><div class="mono" id="profit"></div></div>
+        <div class="kpi"><div>추천</div><div class="mono" id="rec"></div></div>
+        <div class="kpi"><div>수익 점수</div><div class="mono" id="ps"></div></div>
+        <div class="kpi"><div>리스크 점수</div><div class="mono" id="rs"></div></div>
+      </div>
+
+      <div class="kpi" style="margin-top:10px;">
+        <div class="mono" id="detail"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+async function analyze() {
+  const url = document.getElementById('url').value.trim();
+  const sell = document.getElementById('sell').value.trim();
+  if(!url) { alert("URL을 입력해줘"); return; }
+
+  const payload = { url, expectedSellPriceKrw: sell ? Number(sell) : null };
+
+  const res = await fetch('/api/analysis/product', {
+    method:'POST',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if(!res.ok) {
+    const txt = await res.text();
+    alert("분석 실패: " + txt);
+    return;
+  }
+
+  const data = await res.json();
+  document.getElementById('result').style.display = 'block';
+
+  document.getElementById('profit').innerText = Math.round(data.profitKrw).toLocaleString() + "원";
+  document.getElementById('rec').innerText = data.recommendation;
+  document.getElementById('ps').innerText = data.profitScore + "점";
+  document.getElementById('rs').innerText = data.riskScore + "점";
+
+  document.getElementById('detail').innerText =
+    `원가 ${Math.round(data.costKrw).toLocaleString()}원 / 배송 ${Math.round(data.shippingKrw).toLocaleString()}원 / 수수료 ${Math.round(data.feeKrw).toLocaleString()}원 / 예상판매가 ${Math.round(data.expectedSellPriceKrw).toLocaleString()}원`;
+}
+</script>
+</body>
+</html>

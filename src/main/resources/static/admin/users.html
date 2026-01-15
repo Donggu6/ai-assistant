@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin | 사용자 관리</title>
+  <style>
+    body{margin:0;font-family:system-ui,sans-serif;background:#f5f7fb;}
+    header{background:#111;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;}
+    header h1{font-size:18px;margin:0;}
+    .btn{border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:700;}
+    .btnDark{background:#111;color:#fff;}
+    .btnGray{background:#e5e7eb;}
+    .container{max-width:1200px;margin:0 auto;padding:24px;}
+    .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+    input{padding:10px 12px;border:1px solid #ddd;border-radius:10px;outline:none;}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    th,td{padding:12px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:left;}
+    th{background:#fafafa;font-size:12px;color:#444;}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;background:#eef2ff;}
+    .danger{background:#fee2e2;}
+    .ok{background:#dcfce7;}
+    .muted{color:#666;}
+    .rowActions{display:flex;gap:8px;flex-wrap:wrap;}
+    .msg{margin-top:12px;white-space:pre-wrap;font-size:13px;color:#111;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>관리자 | 사용자 관리</h1>
+    <div>
+      <button class="btn btnGray" onclick="location.href='/dashboard.html'">대시보드</button>
+      <button class="btn btnDark" onclick="AuthApi.logout()">로그아웃</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="bar">
+      <input id="q" placeholder="이메일/전화로 검색" />
+      <button class="btn btnDark" id="btnReload">새로고침</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>이메일</th>
+          <th>전화</th>
+          <th>권한</th>
+          <th>플랜</th>
+          <th>2FA</th>
+          <th>실패</th>
+          <th>잠금</th>
+          <th>최근 실패</th>
+          <th>조치</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script src="/assets/js/auth.js"></script>
+  <script>
+    const el = (id) => document.getElementById(id);
+    const msg = (t) => el('msg').textContent = t || '';
+
+    function fmt(d){
+      if(!d) return '-';
+      try { return new Date(d).toLocaleString(); } catch { return String(d); }
+    }
+
+    function row(u){
+      const tr = document.createElement('tr');
+      const lockedPill = u.accountLocked
+        ? `<span class="pill danger">LOCK</span>`
+        : `<span class="pill ok">OK</span>`;
+      tr.innerHTML = `
+        <td>${u.id}</td>
+        <td>
+          <div><b>${u.email}</b></div>
+          <div class="muted">${u.maskedEmail}</div>
+        </td>
+        <td>${u.phone || '-'}</td>
+        <td><span class="pill">${u.role}</span></td>
+        <td>${u.plan || '-'}</td>
+        <td>${u.twoFactorEnabled ? 'ON' : 'OFF'}</td>
+        <td>${u.failedLoginCount}</td>
+        <td>${lockedPill}</td>
+        <td>${fmt(u.lastFailedLoginAt)}</td>
+        <td>
+          <div class="rowActions">
+            <button class="btn btnGray" data-act="unlock" data-id="${u.id}">잠금해제</button>
+            <button class="btn btnGray" data-act="roleUser" data-id="${u.id}">USER</button>
+            <button class="btn btnDark" data-act="roleAdmin" data-id="${u.id}">ADMIN</button>
+          </div>
+        </td>
+      `;
+      return tr;
+    }
+
+    async function load(){
+      msg('');
+      const list = await apiFetch('/admin/users');
+      const q = el('q').value.trim().toLowerCase();
+      const filtered = !q ? list : list.filter(u =>
+        (u.email || '').toLowerCase().includes(q) ||
+        (u.phone || '').toLowerCase().includes(q)
+      );
+
+      const tb = el('tbody');
+      tb.innerHTML = '';
+      filtered.forEach(u => tb.appendChild(row(u)));
+    }
+
+    el('btnReload').onclick = () => load().catch(e=>msg(e.message||e));
+    el('q').addEventListener('input', () => load().catch(()=>{}));
+
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-act]');
+      if(!btn) return;
+      const id = btn.getAttribute('data-id');
+      const act = btn.getAttribute('data-act');
+      try {
+        if(act === 'unlock') {
+          await apiFetch(`/admin/users/${id}/unlock`, { method:'POST' });
+          msg('잠금 해제 완료');
+        }
+        if(act === 'roleUser') {
+          await apiFetch(`/admin/users/${id}/role?role=USER`, { method:'POST' });
+          msg('권한 USER로 변경');
+        }
+        if(act === 'roleAdmin') {
+          await apiFetch(`/admin/users/${id}/role?role=ADMIN`, { method:'POST' });
+          msg('권한 ADMIN으로 변경');
+        }
+        await load();
+      } catch(err) {
+        msg(err.message || err);
+      }
+    });
+
+    load().catch(e=>msg(e.message||e));
+  </script>
+</body>
+</html>
